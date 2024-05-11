@@ -1,6 +1,7 @@
 package com.prakhar.reciipiie.di
 
 import com.prakhar.reciipiie.network.RecipesAPI
+import com.prakhar.reciipiie.repository.RecipesRepository
 import com.prakhar.reciipiie.utils.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -13,6 +14,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideRecipesRepository(api: RecipesAPI) = RecipesRepository(api)
 
     @Singleton
     @Provides

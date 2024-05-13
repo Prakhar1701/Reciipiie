@@ -1,7 +1,5 @@
 package com.prakhar.reciipiie.screens.home
 
-import com.prakhar.reciipiie.components.ReciipiieTabView
-import com.prakhar.reciipiie.components.TabBarItem
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -18,6 +16,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.prakhar.reciipiie.components.ReciipiieTabView
+import com.prakhar.reciipiie.components.TabBarItem
 import com.prakhar.reciipiie.screens.home.views.FavouriteView
 import com.prakhar.reciipiie.screens.home.views.HomeView
 
@@ -51,7 +51,7 @@ fun HomeScreen(
 
             NavHost(navController = homeNavController, startDestination = homeTab.title) {
                 composable(homeTab.title) {
-                    HomeView()
+                    HomeView(navController)
                 }
                 composable(favouriteTab.title) {
                     FavouriteView()

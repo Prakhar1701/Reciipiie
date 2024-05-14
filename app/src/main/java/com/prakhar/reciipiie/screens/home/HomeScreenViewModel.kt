@@ -19,9 +19,10 @@ class HomeScreenViewModel @Inject constructor(private val recipesRepository: Rec
 
     var listOfPopularRecipe: List<Recipe> by mutableStateOf(listOf())
 
-    var isLoading: Boolean by mutableStateOf(true)
+    var isLoadingPopularRecipe: Boolean by mutableStateOf(true)
 
-    var isSuccess: Boolean by mutableStateOf(false)
+    var isSuccessPopularRecipe: Boolean by mutableStateOf(false)
+
 
     init {
         loadRecipes()
@@ -34,33 +35,39 @@ class HomeScreenViewModel @Inject constructor(private val recipesRepository: Rec
     private fun getPopularRecipes() {
 
         viewModelScope.launch {
+
             try {
                 when (val recipes = recipesRepository.getRandomRecipes()) {
-                    is Resource.Success -> handleSuccess(recipes.data)
-                    is Resource.Error -> handleError(recipes.message)
-                    else -> isLoading = false
+
+                    is Resource.Success -> {
+
+                        listOfPopularRecipe = recipes.data!!
+
+                        if (listOfPopularRecipe.isNotEmpty()) {
+                            isLoadingPopularRecipe = false
+                            isSuccessPopularRecipe = true
+                        }
+
+                    }
+
+                    is Resource.Error -> {
+
+                        isLoadingPopularRecipe = false
+                        isSuccessPopularRecipe = false
+
+                        Log.d("API", "GET-RANDOM-RECIPES RESOURCE-ERROR: ${recipes.message}")
+                    }
+
+                    else -> {
+                        isLoadingPopularRecipe = false
+                    }
                 }
             } catch (exception: Exception) {
-                handleError(exception.message)
-            } finally {
-                isLoading = false
+
+                isLoadingPopularRecipe = false
+
+                Log.d("API", "GET-RANDOM-RECIPES EXCEPTION: ${exception.message}")
             }
         }
-    }
-
-    private fun handleSuccess(recipes: List<Recipe>?) {
-        if (!recipes.isNullOrEmpty()) {
-            listOfPopularRecipe = recipes
-            isSuccess = true
-        }
-    }
-
-    private fun handleError(errorMessage: String?) {
-        isSuccess = false
-        errorMessage?.let { Log.d(LOG_TAG_API, it) }
-    }
-
-    companion object {
-        private const val LOG_TAG_API = "API"
     }
 }

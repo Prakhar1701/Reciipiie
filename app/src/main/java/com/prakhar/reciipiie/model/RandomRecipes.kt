@@ -1,5 +1,5 @@
 package com.prakhar.reciipiie.model
 
-data class Recipes(
+data class RandomRecipes(
     val recipes: List<Recipe>
 )

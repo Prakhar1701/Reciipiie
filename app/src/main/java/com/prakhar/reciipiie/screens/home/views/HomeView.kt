@@ -88,6 +88,8 @@ fun ReciipiieSearchBar(
     }
 }
 
+// Mid Composable
+
 @Composable
 private fun PopularRecipesRow(
     navController: NavController, viewModel: HomeScreenViewModel = hiltViewModel()
@@ -98,7 +100,7 @@ private fun PopularRecipesRow(
 
     val listOfRecipe = viewModel.listOfPopularRecipe
 
-    if (viewModel.isLoading) {
+    if (viewModel.isLoadingPopularRecipe) {
 
         LinearProgressIndicator(
             modifier = Modifier
@@ -106,7 +108,7 @@ private fun PopularRecipesRow(
                 .padding(top = 20.dp, bottom = 20.dp)
         )
 
-    } else if (!viewModel.isSuccess) {
+    } else if (!viewModel.isSuccessPopularRecipe) {
 
         Text(text = "Something went wrong, unable to load popular recipes\u2757")
 

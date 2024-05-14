@@ -38,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.prakhar.reciipiie.R
@@ -48,7 +47,7 @@ import com.prakhar.reciipiie.navigation.ReciipiieScreens
 import com.prakhar.reciipiie.screens.home.HomeScreenViewModel
 
 @Composable
-fun HomeView(navController: NavController) {
+fun HomeView(navController: NavController, viewModel: HomeScreenViewModel) {
 
     Surface(
         modifier = Modifier
@@ -61,9 +60,9 @@ fun HomeView(navController: NavController) {
             Text("Discover tasty and healthy receipt", fontSize = 15.sp)
 
             ReciipiieSearchBar()
-            PopularRecipesRow(navController)
+            PopularRecipesRow(navController, viewModel)
             Spacer(modifier = Modifier.height(20.dp))
-            AllRecipesColumn(navController)
+            AllRecipesColumn(navController, viewModel)
         }
     }
 }
@@ -98,7 +97,7 @@ fun ReciipiieSearchBar(
 
 @Composable
 private fun PopularRecipesRow(
-    navController: NavController, viewModel: HomeScreenViewModel = hiltViewModel()
+    navController: NavController, viewModel: HomeScreenViewModel
 ) {
     Text(text = "Popular Recipes", fontSize = 30.sp, fontWeight = FontWeight.Bold)
 
@@ -184,7 +183,7 @@ fun PopularRecipeCard(recipe: Recipe, onClick: () -> Unit = {}) {
 
 @Composable
 private fun AllRecipesColumn(
-    navController: NavController, viewModel: HomeScreenViewModel = hiltViewModel()
+    navController: NavController, viewModel: HomeScreenViewModel
 ) {
     Text(text = "All recipes", fontSize = 30.sp, fontWeight = FontWeight.Bold)
 

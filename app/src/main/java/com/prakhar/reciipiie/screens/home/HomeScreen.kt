@@ -51,7 +51,7 @@ fun HomeScreen(
 
             NavHost(navController = homeNavController, startDestination = homeTab.title) {
                 composable(homeTab.title) {
-                    HomeView(navController)
+                    HomeView(navController, viewModel)
                 }
                 composable(favouriteTab.title) {
                     FavouriteView()

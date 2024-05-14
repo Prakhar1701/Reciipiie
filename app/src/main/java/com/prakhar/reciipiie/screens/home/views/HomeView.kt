@@ -1,8 +1,10 @@
 package com.prakhar.reciipiie.screens.home.views
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +43,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.prakhar.reciipiie.R
 import com.prakhar.reciipiie.model.Recipe
+import com.prakhar.reciipiie.model.Result
 import com.prakhar.reciipiie.navigation.ReciipiieScreens
 import com.prakhar.reciipiie.screens.home.HomeScreenViewModel
 
@@ -58,6 +62,8 @@ fun HomeView(navController: NavController) {
 
             ReciipiieSearchBar()
             PopularRecipesRow(navController)
+            Spacer(modifier = Modifier.height(20.dp))
+            AllRecipesColumn(navController)
         }
     }
 }
@@ -165,6 +171,95 @@ fun PopularRecipeCard(recipe: Recipe, onClick: () -> Unit = {}) {
                     text = "Ready in ${recipe.readyInMinutes} min",
                     fontSize = 14.sp,
                     color = Color.White,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Normal
+                )
+            }
+        }
+    }
+}
+
+// Bottom Composable
+
+@Composable
+private fun AllRecipesColumn(
+    navController: NavController, viewModel: HomeScreenViewModel = hiltViewModel()
+) {
+    Text(text = "All recipes", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+
+    Spacer(modifier = Modifier.height(10.dp))
+
+    val listOfRecipe = viewModel.listOfAllRecipe
+
+    if (viewModel.isLoadingAllRecipe) {
+
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(70.dp)
+                    .padding(top = 30.dp, bottom = 20.dp)
+            )
+        }
+
+    } else if (!viewModel.isSuccessAllRecipe) {
+
+        Text(text = "Something went wrong, unable to load all recipes\u2757")
+
+    } else {
+
+        Column {
+            listOfRecipe.forEach { result ->
+
+                AllRecipeCard(result = result) {
+                    navController.navigate(ReciipiieScreens.DetailScreen.name)
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+        }
+
+    }
+}
+
+@Composable
+fun AllRecipeCard(result: Result, onClick: () -> Unit = {}) {
+
+    Surface(
+        modifier = Modifier
+            .height(115.dp)
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(1.dp, Color.LightGray)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                modifier = Modifier.size(115.dp),
+                model = result.image,
+                contentDescription = "Food Image",
+                contentScale = ContentScale.FillBounds
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column {
+                Text(
+                    text = result.title,
+                    fontSize = 19.sp,
+                    color = Color.Black,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = "Ready in 45 min", // data not available, showing sample data
+                    fontSize = 14.sp,
+                    color = Color.Gray,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Normal

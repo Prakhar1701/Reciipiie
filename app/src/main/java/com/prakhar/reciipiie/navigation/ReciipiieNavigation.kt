@@ -1,9 +1,11 @@
 package com.prakhar.reciipiie.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.prakhar.reciipiie.screens.detail.DetailScreen
 import com.prakhar.reciipiie.screens.home.HomeScreen
 import com.prakhar.reciipiie.screens.login.LoginScreen
@@ -23,8 +25,14 @@ fun ReciipiieNavigation() {
             HomeScreen(navController = navController)
         }
 
-        composable(ReciipiieScreens.DetailScreen.name) {
-            DetailScreen(navController = navController)
+        composable(
+            "${ReciipiieScreens.DetailScreen.name}/{id}", arguments = listOf(navArgument("id") {
+                type = NavType.StringType
+            })
+        ) { backStackEntry ->
+            backStackEntry.arguments?.getString("id").let { id ->
+                DetailScreen(navController = navController, recipeIdString = id.toString())
+            }
         }
     }
 }

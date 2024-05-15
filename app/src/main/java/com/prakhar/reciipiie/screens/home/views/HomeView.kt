@@ -122,7 +122,9 @@ private fun PopularRecipesRow(
         LazyRow {
             items(listOfRecipe) { recipe ->
                 PopularRecipeCard(recipe = recipe) {
-                    navController.navigate(ReciipiieScreens.DetailScreen.name)
+
+                    val idString = recipe.id.toString()
+                    navController.navigate(ReciipiieScreens.DetailScreen.name + "/$idString")
                 }
                 Spacer(modifier = Modifier.width(10.dp))
             }
@@ -212,7 +214,9 @@ private fun AllRecipesColumn(
             listOfRecipe.forEach { result ->
 
                 AllRecipeCard(result = result) {
-                    navController.navigate(ReciipiieScreens.DetailScreen.name)
+
+                    val idString = result.id.toString()
+                    navController.navigate(ReciipiieScreens.DetailScreen.name + "/$idString")
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))

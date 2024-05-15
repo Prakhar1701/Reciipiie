@@ -28,8 +28,13 @@ import coil.compose.AsyncImage
 
 @Composable
 fun DetailScreen(
-    navController: NavHostController, viewModel: DetailScreenViewModel = hiltViewModel()
+    navController: NavHostController,
+    viewModel: DetailScreenViewModel = hiltViewModel(),
+    recipeIdString: String
 ) {
+
+    val recipeId = recipeIdString.toInt()
+
     Surface(modifier = Modifier.fillMaxSize()) {
 
         Column(

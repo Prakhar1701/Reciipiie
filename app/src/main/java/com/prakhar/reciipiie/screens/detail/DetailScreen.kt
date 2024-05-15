@@ -13,11 +13,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -35,43 +38,63 @@ fun DetailScreen(
 
     val recipeId = recipeIdString.toInt()
 
-    Surface(modifier = Modifier.fillMaxSize()) {
+    viewModel.getRecipeInformation(recipeId)
 
-        Column(
-            modifier = Modifier
-                .padding(top = 30.dp)
-                .verticalScroll(rememberScrollState())
-        ) {
+    if (viewModel.isLoadingRecipeInformation) {
 
-            AsyncImage(
-                modifier = Modifier.height(400.dp),
-                model = "https://img.etimg.com/photo/msid-70160112,imgsize-133305/Blackicecream.jpg", // sample image
-                contentDescription = "Food Image",
-                contentScale = ContentScale.Crop
-            )
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(modifier = Modifier.size(70.dp))
         }
 
-        Box(
-            modifier = Modifier
-                .padding(top = 50.dp, end = 20.dp)
-                .fillMaxWidth(),
-            contentAlignment = androidx.compose.ui.Alignment.TopEnd
-        ) {
-            FloatingActionButton(contentColor = Color.Red,
-                containerColor = Color.White,
-                shape = CircleShape,
-                elevation = FloatingActionButtonDefaults.elevation(),
-                onClick = { viewModel.isFavourite = !viewModel.isFavourite }) {
+    } else if (viewModel.isSuccessRecipeInformation) {
 
-                val imageVector =
-                    if (viewModel.isFavourite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder
+        val recipe = viewModel.recipeInformation!!
 
-                Icon(
-                    imageVector = imageVector,
-                    contentDescription = "Favourite, Floating Button",
-                    modifier = Modifier.size(30.dp)
+        Surface(modifier = Modifier.fillMaxSize()) {
+
+            Column(
+                modifier = Modifier
+                    .padding(top = 30.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+
+                AsyncImage(
+                    modifier = Modifier.height(400.dp),
+                    model = recipe.image,
+                    contentDescription = "Food Image",
+                    contentScale = ContentScale.Crop
                 )
+
+                Text(recipe.title)
+            }
+
+            Box(
+                modifier = Modifier
+                    .padding(top = 50.dp, end = 20.dp)
+                    .fillMaxWidth(),
+                contentAlignment = androidx.compose.ui.Alignment.TopEnd
+            ) {
+                FloatingActionButton(contentColor = Color.Red,
+                    containerColor = Color.White,
+                    shape = CircleShape,
+                    elevation = FloatingActionButtonDefaults.elevation(),
+                    onClick = { viewModel.isFavourite = !viewModel.isFavourite }) {
+
+                    val imageVector =
+                        if (viewModel.isFavourite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder
+
+                    Icon(
+                        imageVector = imageVector,
+                        contentDescription = "Favourite, Floating Button",
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
             }
         }
+    } else {
+        Text(
+            text = "Something went wrong, unable to load recipe details\u2757",
+            modifier = Modifier.padding(100.dp)
+        )
     }
 }

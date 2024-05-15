@@ -43,4 +43,22 @@ class RecipesRepository @Inject constructor(private val api: RecipesAPI) {
             Resource.Error(message = e.message.toString())
         }
     }
+
+    suspend fun getRecipeInformation(recipeId: Int): Resource<Recipe> {
+
+        return try {
+
+            Resource.Loading(data = true)
+
+            val recipeInformation = api.getRecipeInformation(recipeId)
+
+            Resource.Loading(data = false)
+
+            Resource.Success(data = recipeInformation)
+
+        } catch (e: Exception) {
+
+            Resource.Error(message = e.message.toString())
+        }
+    }
 }

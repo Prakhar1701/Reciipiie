@@ -1,7 +1,10 @@
 package com.prakhar.reciipiie.screens.detail
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,10 +27,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.prakhar.reciipiie.components.InfoDisplay1
+import com.prakhar.reciipiie.components.clearString
+import com.prakhar.reciipiie.model.Recipe
 
 @Composable
 fun DetailScreen(
@@ -65,14 +73,16 @@ fun DetailScreen(
                     contentScale = ContentScale.Crop
                 )
 
-                Text(recipe.title)
+                Spacer(modifier = Modifier.height(50.dp))
+
+                DetailScreenUI(recipe)
             }
 
             Box(
                 modifier = Modifier
                     .padding(top = 50.dp, end = 20.dp)
                     .fillMaxWidth(),
-                contentAlignment = androidx.compose.ui.Alignment.TopEnd
+                contentAlignment = Alignment.TopEnd
             ) {
                 FloatingActionButton(contentColor = Color.Red,
                     containerColor = Color.White,
@@ -96,5 +106,38 @@ fun DetailScreen(
             text = "Something went wrong, unable to load recipe details\u2757",
             modifier = Modifier.padding(100.dp)
         )
+    }
+}
+
+@Composable
+private fun DetailScreenUI(recipe: Recipe) {
+
+    Row(
+        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        InfoDisplay1(topStr = "Ready in", bottomStr = recipe.readyInMinutes.toString())
+        InfoDisplay1(topStr = "Servings", bottomStr = recipe.servings.toString())
+        InfoDisplay1(topStr = "Price/serving", bottomStr = recipe.pricePerServing.toString())
+    }
+
+    Column(
+        modifier = Modifier.padding(20.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start
+    ) {
+
+        Text(text = "Instructions", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(text = recipe.instructions.clearString(), color = Color.Gray)
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Text(text = "Quick Summary", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(text = recipe.summary.clearString(), color = Color.Gray)
     }
 }

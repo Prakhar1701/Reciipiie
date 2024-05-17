@@ -25,17 +25,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.prakhar.reciipiie.R
 import com.prakhar.reciipiie.navigation.ReciipiieScreens
 
 @Composable
 fun LoginScreen(
-    navController: NavHostController,
-    viewModel: LoginScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    navController: NavHostController, viewModel: LoginScreenViewModel = viewModel()
 ) {
+    LoginScreenUI { navController.navigate(ReciipiieScreens.HomeScreen.name) }
+}
+
+@Preview
+@Composable
+private fun LoginScreenUI(onButtonClick: () -> Unit = {}) {
     Scaffold { contentPadding ->
         Surface(
             modifier = Modifier
@@ -77,7 +84,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
-                    onClick = { navController.navigate(ReciipiieScreens.HomeScreen.name) },
+                    onClick = { onButtonClick() },
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(

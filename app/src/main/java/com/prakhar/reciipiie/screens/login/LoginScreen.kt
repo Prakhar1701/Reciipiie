@@ -1,5 +1,10 @@
 package com.prakhar.reciipiie.screens.login
 
+import android.app.Activity
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,10 +22,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,16 +37,74 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.prakhar.reciipiie.R
 import com.prakhar.reciipiie.navigation.ReciipiieScreens
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+
 
 @Composable
 fun LoginScreen(
-    navController: NavHostController, viewModel: LoginScreenViewModel = viewModel()
+    navController: NavHostController,
+    viewModel: LoginScreenViewModel = viewModel(),
+    googleAuthUiClient: GoogleAuthUiClient
 ) {
-    LoginScreenUI { navController.navigate(ReciipiieScreens.HomeScreen.name) }
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val state by viewModel.state.collectAsStateWithLifecycle(lifecycleOwner.lifecycle)
+
+    LaunchedEffect(key1 = Unit) {
+        if (googleAuthUiClient.getSignedInUser() != null) {
+            navController.navigate(ReciipiieScreens.HomeScreen.name)
+        }
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                GlobalScope.launch {
+                    val signInResult = googleAuthUiClient.signInWithIntent(
+                        intent = result.data ?: return@launch
+                    )
+                    viewModel.onSignInResult(signInResult)
+                }
+            }
+        })
+
+    LaunchedEffect(key1 = state.isSignInSuccessful) {
+
+        if (state.isSignInSuccessful) {
+            Toast.makeText(
+                context, "Signed In Successfully", Toast.LENGTH_LONG
+            ).show()
+
+            navController.navigate(ReciipiieScreens.HomeScreen.name)
+            viewModel.resetState()
+        }
+    }
+
+    LaunchedEffect(key1 = state.signInError) {
+        state.signInError?.let { error ->
+            Toast.makeText(
+                context, error, Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    LoginScreenUI {
+        GlobalScope.launch {
+            val signInIntentSender = googleAuthUiClient.signIn()
+            launcher.launch(
+                IntentSenderRequest.Builder(
+                    signInIntentSender ?: return@launch
+                ).build()
+            )
+        }
+    }
 }
 
 @Preview

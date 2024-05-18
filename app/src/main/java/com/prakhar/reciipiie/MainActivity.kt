@@ -11,31 +11,41 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.google.android.gms.auth.api.identity.Identity
 import com.prakhar.reciipiie.navigation.ReciipiieNavigation
+import com.prakhar.reciipiie.screens.login.GoogleAuthUiClient
 import com.prakhar.reciipiie.ui.theme.ReciipiieTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val googleAuthUiClient by lazy {
+        GoogleAuthUiClient(
+            context = applicationContext,
+            oneTapClient = Identity.getSignInClient(applicationContext)
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             ReciipiieTheme {
-                ReciipiieApp()
+                ReciipiieApp(googleAuthUiClient)
             }
         }
     }
 
     @Composable
-    fun ReciipiieApp() {
+    fun ReciipiieApp(googleAuthUiClient: GoogleAuthUiClient) {
 
         Surface(modifier = Modifier.fillMaxSize()) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ReciipiieNavigation()
+                ReciipiieNavigation(googleAuthUiClient)
             }
         }
     }

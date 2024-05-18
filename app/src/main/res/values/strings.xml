@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Reciipiie</string>
     <string name="search_recipe">Search any recipe</string>
+    <string name="web_client_id">736925307741-37pas0tsjvpecs42g5on667liuk38vno.apps.googleusercontent.com</string>
 </resources>

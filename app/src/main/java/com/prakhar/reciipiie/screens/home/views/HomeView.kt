@@ -17,13 +17,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -45,9 +49,28 @@ import com.prakhar.reciipiie.model.Recipe
 import com.prakhar.reciipiie.model.Result
 import com.prakhar.reciipiie.navigation.ReciipiieScreens
 import com.prakhar.reciipiie.screens.home.HomeScreenViewModel
+import com.prakhar.reciipiie.screens.login.UserData
 
 @Composable
-fun HomeView(navController: NavController, viewModel: HomeScreenViewModel) {
+fun HomeView(
+    navController: NavController,
+    viewModel: HomeScreenViewModel,
+    userData: UserData?,
+    onSignOut: () -> Unit
+) {
+
+    var userFirstName = "<user first name>"
+    var userProfilePictureUrl =
+        "https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png"
+
+    if (userData?.username != null) {
+        val userFullName = userData.username
+        userFirstName = userFullName.split(" ")[0]
+    }
+
+    if (userData?.profilePictureUrl != null) {
+        userProfilePictureUrl = userData.profilePictureUrl
+    }
 
     Surface(
         modifier = Modifier
@@ -56,8 +79,42 @@ fun HomeView(navController: NavController, viewModel: HomeScreenViewModel) {
     ) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
 
-            Text("\uD83D\uDC4B Hey <user first name>", fontSize = 20.sp)
-            Text("Discover tasty and healthy receipt", fontSize = 15.sp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                AsyncImage(
+                    model = userProfilePictureUrl,
+                    contentDescription = "User Profile Picture",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+
+                Column(Modifier.fillMaxWidth(0.8f)) {
+                    Text(
+                        "\uD83D\uDC4B Hey $userFirstName",
+                        fontSize = 20.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        "Discover tasty and healthy receipt",
+                        fontSize = 15.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                IconButton(onClick = { onSignOut() }) {
+                    Icon(
+                        imageVector = Icons.Outlined.ExitToApp, contentDescription = "Logout Button"
+                    )
+                }
+            }
 
             ReciipiieSearchBar()
             PopularRecipesRow(navController, viewModel)

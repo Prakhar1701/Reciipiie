@@ -1,22 +1,27 @@
 package com.prakhar.reciipiie.screens.home
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.prakhar.reciipiie.data.DataOrException
 import com.prakhar.reciipiie.data.Resource
 import com.prakhar.reciipiie.model.Recipe
 import com.prakhar.reciipiie.model.Result
+import com.prakhar.reciipiie.repository.FireRepository
 import com.prakhar.reciipiie.repository.RecipesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(private val recipesRepository: RecipesRepository) :
-    ViewModel() {
+class HomeScreenViewModel @Inject constructor(
+    private val recipesRepository: RecipesRepository, private val fireRepository: FireRepository
+) : ViewModel() {
 
     var listOfPopularRecipe: List<Recipe> by mutableStateOf(listOf())
 
@@ -114,6 +119,18 @@ class HomeScreenViewModel @Inject constructor(private val recipesRepository: Rec
 
                 Log.d("API", "GET-ALL-RECIPES EXCEPTION: ${exception.message}")
             }
+        }
+    }
+
+    val data: MutableState<DataOrException<List<Recipe>, Boolean, Exception>> = mutableStateOf(
+        DataOrException(listOf(), true, Exception(""))
+    )
+
+    fun getUserFavouritesFromFirestoreDatabase(userId: String) {
+        viewModelScope.launch(Dispatchers.Main) {
+            data.value.loading = true
+            data.value = fireRepository.getUserFavourites(userId)
+            data.value.loading = false
         }
     }
 }

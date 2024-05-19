@@ -79,7 +79,7 @@ fun HomeScreen(
                 }
 
                 composable(favouriteTab.title) {
-                    FavouriteView()
+                    FavouriteView(navController, viewModel, userData)
                 }
             }
         }

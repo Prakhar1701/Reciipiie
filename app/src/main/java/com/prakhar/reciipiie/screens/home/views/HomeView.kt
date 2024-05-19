@@ -217,7 +217,7 @@ fun PopularRecipeCard(recipe: Recipe, onClick: () -> Unit = {}) {
             ) {
 
                 Text(
-                    text = recipe.title,
+                    text = recipe.title!!,
                     fontSize = 19.sp,
                     color = Color.White,
                     maxLines = 1,

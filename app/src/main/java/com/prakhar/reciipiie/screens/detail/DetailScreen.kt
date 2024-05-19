@@ -135,7 +135,7 @@ private fun DetailScreenUI(recipe: Recipe) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = recipe.instructions.clearString(), color = Color.Gray)
+        Text(text = recipe.instructions!!.clearString(), color = Color.Gray)
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -143,6 +143,6 @@ private fun DetailScreenUI(recipe: Recipe) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Text(text = recipe.summary.clearString(), color = Color.Gray)
+        Text(text = recipe.summary!!.clearString(), color = Color.Gray)
     }
 }

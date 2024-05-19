@@ -1,6 +1,8 @@
 package com.prakhar.reciipiie.di
 
+import com.google.firebase.firestore.FirebaseFirestore
 import com.prakhar.reciipiie.network.RecipesAPI
+import com.prakhar.reciipiie.repository.FireRepository
 import com.prakhar.reciipiie.repository.RecipesRepository
 import com.prakhar.reciipiie.utils.Constants.BASE_URL
 import dagger.Module
@@ -14,6 +16,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideFireBookRepository() = FireRepository(
+        favourites = FirebaseFirestore.getInstance().collection("favourites")
+    )
 
     @Singleton
     @Provides

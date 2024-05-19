@@ -36,13 +36,16 @@ import coil.compose.AsyncImage
 import com.prakhar.reciipiie.components.InfoDisplay1
 import com.prakhar.reciipiie.components.clearString
 import com.prakhar.reciipiie.model.Recipe
+import com.prakhar.reciipiie.screens.login.GoogleAuthUiClient
 
 @Composable
 fun DetailScreen(
     navController: NavHostController,
     viewModel: DetailScreenViewModel = hiltViewModel(),
-    recipeIdString: String
+    recipeIdString: String,
+    googleAuthUiClient: GoogleAuthUiClient
 ) {
+    val userId = googleAuthUiClient.getSignedInUser()?.userId.toString()
 
     val recipeId = recipeIdString.toInt()
 
@@ -88,8 +91,10 @@ fun DetailScreen(
                     containerColor = Color.White,
                     shape = CircleShape,
                     elevation = FloatingActionButtonDefaults.elevation(),
-                    onClick = { viewModel.isFavourite = !viewModel.isFavourite }) {
-
+                    onClick = {
+                        viewModel.isFavourite = !viewModel.isFavourite
+                        viewModel.addRemoveFavourite(userId, recipe)
+                    }) {
                     val imageVector =
                         if (viewModel.isFavourite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder
 

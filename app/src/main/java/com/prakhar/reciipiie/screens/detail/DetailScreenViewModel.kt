@@ -8,14 +8,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prakhar.reciipiie.data.Resource
 import com.prakhar.reciipiie.model.Recipe
+import com.prakhar.reciipiie.repository.FireRepository
 import com.prakhar.reciipiie.repository.RecipesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailScreenViewModel @Inject constructor(private val recipesRepository: RecipesRepository) :
-    ViewModel() {
+class DetailScreenViewModel @Inject constructor(
+    private val recipesRepository: RecipesRepository, private val fireRepository: FireRepository
+) : ViewModel() {
 
     var isFavourite: Boolean by mutableStateOf(false)
 
@@ -60,6 +62,17 @@ class DetailScreenViewModel @Inject constructor(private val recipesRepository: R
                 isLoadingRecipeInformation = false
 
                 Log.d("API", "GET-RECIPE-INFORMATION EXCEPTION: ${exception.message}")
+            }
+        }
+    }
+
+    fun addRemoveFavourite(userId: String, recipe: Recipe) {
+        viewModelScope.launch {
+            if (isFavourite) {
+                fireRepository.saveUserFavourite(userId, recipe = recipe)
+
+            } else {
+                fireRepository.deleteUserFavourite(userId, recipe)
             }
         }
     }

@@ -32,7 +32,11 @@ fun ReciipiieNavigation(googleAuthUiClient: GoogleAuthUiClient) {
             })
         ) { backStackEntry ->
             backStackEntry.arguments?.getString("id").let { id ->
-                DetailScreen(navController = navController, recipeIdString = id.toString())
+                DetailScreen(
+                    navController = navController,
+                    recipeIdString = id.toString(),
+                    googleAuthUiClient = googleAuthUiClient
+                )
             }
         }
     }

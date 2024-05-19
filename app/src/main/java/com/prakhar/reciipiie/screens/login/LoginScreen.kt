@@ -42,10 +42,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.prakhar.reciipiie.R
 import com.prakhar.reciipiie.navigation.ReciipiieScreens
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun LoginScreen(
     navController: NavHostController,
@@ -82,6 +84,10 @@ fun LoginScreen(
                 context, "Signed In Successfully", Toast.LENGTH_LONG
             ).show()
 
+            val userData = googleAuthUiClient.getSignedInUser()
+            if (userData != null) {
+                viewModel.addUserToFirestoreDatabase(userData)
+            }
             navController.navigate(ReciipiieScreens.HomeScreen.name)
             viewModel.resetState()
         }

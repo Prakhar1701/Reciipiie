@@ -70,4 +70,26 @@ class FireRepository @Inject constructor(private val favourites: CollectionRefer
             Log.w("DELETE-RECIPE-FIRESTORE", "Error finding document to delete", e)
         }
     }
+
+    suspend fun isUserFavourite(userId: String, recipe: Recipe): Boolean {
+
+        return try {
+
+            val favouritesCollection =
+                favourites.whereEqualTo("user_id", userId).whereEqualTo("recipe_id", recipe.id)
+
+            val querySnapshot = favouritesCollection.get().await()
+
+            if (querySnapshot.documents.isNotEmpty()) {
+                // Document exists, meaning it is a favourite
+                true
+            } else {
+                // Document does not exist, meaning it is not a favourite
+                false
+            }
+        } catch (e: Exception) {
+            Log.w("CHECK-FAVOURITE-RECIPE-FIRESTORE", "Error checking favourite status", e)
+            false
+        }
+    }
 }

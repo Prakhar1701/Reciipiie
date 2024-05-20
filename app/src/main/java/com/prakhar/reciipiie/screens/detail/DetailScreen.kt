@@ -61,6 +61,8 @@ fun DetailScreen(
 
         val recipe = viewModel.recipeInformation!!
 
+        viewModel.isUserFavourite(userId, recipe)
+
         Surface(modifier = Modifier.fillMaxSize()) {
 
             Column(

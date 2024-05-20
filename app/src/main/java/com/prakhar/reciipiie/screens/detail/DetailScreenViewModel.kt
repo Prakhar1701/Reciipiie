@@ -66,6 +66,13 @@ class DetailScreenViewModel @Inject constructor(
         }
     }
 
+    fun isUserFavourite(userId: String, recipe: Recipe) {
+
+        viewModelScope.launch {
+            isFavourite = fireRepository.isUserFavourite(userId, recipe)
+        }
+    }
+
     fun addRemoveFavourite(userId: String, recipe: Recipe) {
         viewModelScope.launch {
             if (isFavourite) {

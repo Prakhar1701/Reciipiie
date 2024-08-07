@@ -116,7 +116,7 @@ fun HomeView(
                 }
             }
 
-            ReciipiieSearchBar()
+        //    ReciipiieSearchBar()
             PopularRecipesRow(navController, viewModel)
             Spacer(modifier = Modifier.height(20.dp))
             AllRecipesColumn(navController, viewModel)
